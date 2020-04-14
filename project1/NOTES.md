@@ -16,3 +16,10 @@ TASK-2: Python and FLASK
 5. Checked for version of Werkzeug if it is 1.0.1 we need to uninstall and reinstall 0.16.0 version according our system. 
 6. "py -m pip install Werkzeug==0.16.0"
 7. Now "flask run" and copy http link and test over internet
+
+TASK-3: Goodreads API
+1. Visited link and created my account using google account
+2. Navigated through apply for API link filled the name of app "wp-project1-105" and got key
+3. Copied the code given in doc and pasted in project1 goodr.py and pasted that key in the place of KEY in the py file
+4. I need to install requests first to run this "py -m pip install requests"
+5. Now executed goodr.py file "py goodr.py" and got some books
