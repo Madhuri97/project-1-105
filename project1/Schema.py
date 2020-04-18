@@ -13,5 +13,5 @@ class schema(db.Model):
     def __init__(self, name, email, pwd):
         self.name = name
         self.email = email
-        self.pwd = sha256_crypt.encrypt("password")
+        self.pwd = sha256_crypt.encrypt("password") 
         self.createtimestamp = datetime.now()
