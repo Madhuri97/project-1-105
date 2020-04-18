@@ -19,3 +19,19 @@ Task-2:  Insert records
 Time: 30min
 Problems: the wrong symbol over alert is not worked 
 Fixed: added scripts to the registration file.
+
+Task-3: Retrieve data from a database table
+
+1. Created admin html page to display the records from the database
+2. In Schema.py i had added timestamp record to the table
+3. i had created route for admin for checking the details about registered users
+5. Adminer-- went to the table  i created and altered my table by adding timestamp
+4. I also added password encryption because passwords should be in private i had used sha256 for the encryption
+Time: 1hr
+Problems: 
+1. timestamp is not creted properly in heroku
+2. password implementation is not applied  
+Fixed:
+1. i have went to adminer and dropped the table after running the code the database created again
+2. installed one python package using py -m pip install passlib
+Reference: https://pythonprogramming.net/password-hashing-flask-tutorial/
