@@ -42,6 +42,14 @@ def result():
     else:
         return render_template("Registration.html")
 
+
+@app.route('/admin')
+def admin():
+    alludata = schema.query.all()
+    return render_template("admin.html", admin = alludata)
+
+
+
 # creation of table
 
 # if __name__ == '__main__':
