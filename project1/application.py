@@ -28,11 +28,17 @@ def result():
     db.create_all()
     if request.method == 'POST':
         udata = schema(request.form["name"], request.form["email"], request.form["pswd"])
+        user = schema.query.filter_by(email = request.form['email']).first()
+        if user is not None:
+            print("User already exists. try to register if you are new user")
+            var = "Error: User already exists. please try to register if you are a new user"
+            return render_template("Registration.html", message1 = var)
         # output = request.form
         # print(output['name'])
         db.session.add(udata)
         db.session.commit()
-        return render_template("Registration.html")   
+        var = 'Registration Success'
+        return render_template("Registration.html", message = var)   
     else:
         return render_template("Registration.html")
 

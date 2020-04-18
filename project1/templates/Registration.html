@@ -39,7 +39,26 @@
                 </div>
             </br>
                 <button type="submit" class="btn btn-primary">Submit</button>
-              </form>    
+            </form>  
+            </br>
+            {% if message %}
+            <div class = "container" style="text-align: center;">
+            <div class="alert alert-success alert-dismissible">
+            <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{message}}
+            </div>
+            </div>
+            </br>
+            {%endif%}
+            {% if message1 %}
+            <div class = "container" style="text-align: center;">
+            <div class="alert alert-danger alert-dismissible">
+            <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{message1}}
+            </div>
+            </div>
+            {%endif%}
+
         </div>
     </body>
 </html>
