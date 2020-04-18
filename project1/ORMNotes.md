@@ -10,3 +10,12 @@ Time: 5hrs
 Reference:https://hackersandslackers.com/flask-sqlalchemy-database-models/
 Problems: connecting application.py to Schema.py
 fixed: by giving proper names and cheacked the sequence of lines.
+
+Task-2:  Insert records
+
+1. Added Alerts implementation in the Registration.html for proper creation of user 
+2. In application.py i have added two messages for the proper creation and an error message if the user already exists or user entered any wrong message
+3. I have created objects in registration form and assigned in application.py for the messages 
+Time: 30min
+Problems: the wrong symbol over alert is not worked 
+Fixed: added scripts to the registration file.
