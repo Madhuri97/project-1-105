@@ -1,4 +1,3 @@
-import os
 
 from flask import Flask, session
 from flask_session import Session
@@ -19,7 +18,6 @@ Session(app)
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
-
 
 @app.route("/")
 def index():
