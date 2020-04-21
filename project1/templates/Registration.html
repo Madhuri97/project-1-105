@@ -41,27 +41,27 @@
                   </label>
                 </div>
             </br>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="submit" class="btn btn-primary" formaction = "http://127.0.0.1:5000/authen"><b>Login</b></button>
             </form>  
             </br>
             {% if message %}
-            <div class = "container" style="text-align: center;">
-            <div class="alert alert-success alert-dismissible">
-            <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            {{message}}
-            </div>
-            </div>
+                <div class = "container" style="text-align: center;">
+                <div class="alert alert-success alert-dismissible">
+                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{message}}
+                </div>
+                </div>
             </br>
             {%endif%}
             {% if message1 %}
-            <div class = "container" style="text-align: center;">
-            <div class="alert alert-danger alert-dismissible">
-            <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            {{message1}}
-            </div>
-            </div>
+                <div class = "container" style="text-align: center;">
+                <div class="alert alert-danger alert-dismissible">
+                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{message1}}
+                </div>
+                </div>
             {%endif%}
-
         </div>
     </body>
 </html>
