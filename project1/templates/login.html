@@ -3,20 +3,103 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='icon.png') }}">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <style>
-            input[type=text] {
-                background-color: chartreuse;
-            }
+        body {
+        font-family: Arial;
+        }
+
+        * {
+        box-sizing: border-box;
+        }
+
+        form.example input[type=text] {
+        padding: 10px;
+        font-size: 17px;
+        border: 1px solid grey;
+        float: left;
+        width: 80%;
+        background: #f1f1f1;
+        }
+
+        form.example button {
+        float: left;
+        width: 20%;
+        padding: 10px;
+        background: #2196F3;
+        color: white;
+        font-size: 17px;
+        border: 1px solid grey;
+        border-left: none;
+        cursor: pointer;
+        }
+
+        form.example button:hover {
+        background: #0b7dda;
+        }
+
+        .my-custom-scrollbar {
+            position: relative;
+            height: 400px;
+            overflow: auto;
+        }
+        .table-wrapper-scroll-y {
+        display: block;
+        }
+        
         </style>
     </head>
-    <body> 
-        <h3 style = "text-align: center">Logged in successfully</h3>
-        <form>
-            <button type = "submit" class="btn btn-primary" formaction = "http://127.0.0.1:5000/logout">Logout</button>
+    <body style="background-image: url('static/girlbook.gif'); background-size: cover; background-repeat: no-repeat;">
+        <nav class="navbar navbar-dark bg-dark justify-content-between">
+        <a class="navbar-brand text-primary">&#128103&#127995: {{ user }}</a>
+        <form class="form-inline">
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" formaction = '/logout'>Logout</button>
         </form>
+        </nav>
+        </br>
+        </br>
+        </br>
+        <div class="mx-auto">
+            <form class="example" action="/action_page.php" style="margin:auto;max-width:700px" method = 'POST'>
+                <input type="text" placeholder="Search.." name="Search">
+                <button type="submit" formaction='/home' id="#display"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+        </br>
+        </br>
+        {% if formaction == '/home'  %}
+        <h1 id = "display" style = "text-align:center">Books</h1><br>
+        <div class="container">
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table xlass = "table" border = 1 align = "center" class="table table-striped">
+                    <th class="bg-secondary text-white"> {{ "ISBN" }}</th>
+                    <th class="bg-secondary text-white"> {{ "Title" }}</th>
+                    <th class="bg-secondary text-white"> {{ "Author" }}</th>
+                    <th class="bg-secondary text-white"> {{ "Year" }}</th>
+                    {% for i in booksdata %}
+                        <tr>
+                            <td> {{ i.isbn}} </td>
+                            <td> {{ i.title}} </td>
+                            <td> {{ i.author}} </td>
+                            <td> {{ i.year }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% endif %}
+        {% if message1 %}
+                <div class = "container" style="text-align: center;">
+                <div class="alert alert-danger alert-dismissible">
+                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{message1}}
+                </div>
+                </div>
+        {%endif%}
     </body>
 </html>
