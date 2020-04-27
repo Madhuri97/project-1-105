@@ -81,12 +81,14 @@
                     <th class="bg-secondary text-white"> {{ "Title" }}</th>
                     <th class="bg-secondary text-white"> {{ "Author" }}</th>
                     <th class="bg-secondary text-white"> {{ "Year" }}</th>
+                    <th class="bg-secondary text-white"> {{ "View Book Page" }}</th>
                     {% for i in booksdata %}
                         <tr>
                             <td> {{ i.isbn}} </td>
                             <td> {{ i.title}} </td>
                             <td> {{ i.author}} </td>
                             <td> {{ i.year }}</td>
+                            <td><a href = "{{ url_for("bookpage", id = i.isbn)}}">Click Here</a></td>
                         </tr>
                     {% endfor %}
                 </table>
