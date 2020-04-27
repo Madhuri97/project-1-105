@@ -6,7 +6,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import Flask, redirect, url_for, render_template, request, session
 import logging
 from Schema import *
-
+from books_db import *
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -87,3 +87,8 @@ def logout():
     except:
         var = "You must logout from the page"
         return render_template("Registration.html", message1 = var)
+
+@app.route("/bookpage/<id>")
+def bookpage(id):
+    booksdata = db.session.query(Books).filter(Books.isbn == id)
+    return render_template("bookpage.html", data = booksdata)
