@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Review Page</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <style>
+            *{
+                    margin: 0;
+                    padding: 0;
+                }
+                .rate {
+                    float: left;
+                    height: 46px;
+                    padding: 0 10px;
+                }
+                .rate:not(:checked) > input {
+                    position:absolute;
+                    top:-9999px;
+                }
+                .rate:not(:checked) > label {
+                    float:right;
+                    width:1em;
+                    overflow:hidden;
+                    white-space:nowrap;
+                    cursor:pointer;
+                    font-size:30px;
+                    color:#ccc;
+                }
+                .rate:not(:checked) > label:before {
+                    content: '★ ';
+                }
+                .rate > input:checked ~ label {
+                    color: #ffc700;    
+                }
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #deb217;  
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #c59b08;
+}
+
+/* Modified from: https://github.com/mukulkant/Star-rating-using-pure-css */
+        </style>
+    </head>
+    <body style="background-image: url('static/book.gif'); background-repeat: no-repeat;">
+        <form formaction="http://localhost:5000/bookpage" method="POST" >
+            <div style = "padding-bottom: 18px; font-size:24px ;">Book Review</div>
+            <div style="padding-bottom: 18px;">ISBN<br/>
+                <input type="number"  name="isbn" style="width : 450px;" class="form-control"/>
+            </div>
+            <div style="padding-bottom: 18px;">User name<br/>
+                <input type="text"  name="user" style="width : 450px;" class="form-control"/>
+            </div>
+            <div style="padding-bottom: 18px;">Rate this book<br/>
+                <!-- <select id="data_4" name="data_4" style="width : 150px;" class="form-control"><option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                </select> -->
+            </div>
+            <div class="rate">
+                <input type="radio" id="star5" name="rate" value="5" />
+                <label for="star5" title="text">5</label>
+                <input type="radio" id="star4" name="rate" value="4" />
+                <label for="star4" title="text">4 </label>
+                <input type="radio" id="star3" name="rate" value="3" />
+                <label for="star3" title="text">3 </label>
+                <input type="radio" id="star2" name="rate" value="2" />
+                <label for="star2" title="text">2 </label>
+                <input type="radio" id="star1" name="rate" value="1" />
+                <label for="star1" title="text">1 </label>
+            </div>
+           <br></br>
+        </br>
+               <div style="padding-bottom: 18px; align-content: flex-start;">Review<br/>
+                <textarea  style="width : 450px;" rows="9" class="form-control" name="review" ></textarea>
+            </div>
+            <div style="padding-bottom: 18px;"><input name="skip_Submit" value="Submit" type="submit"/></div>
+        </form>
+
+      
+        {% if message1 %}
+            <div class = "container" style="text-align:left;">
+            <div class="alert alert-danger alert-dismissible">
+            <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{message1}}
+            </div>
+            </div>
+            {%endif%}
+            <br>
+            <h1> Reviews</h1>
+            <div>
+                {% for detail in details %}
+                <!-- <h1 id="view" style = "text-align:center"> Reviews</h1> -->
+                <tr><div >
+                <div class="card" style="width: 18rem;">
+                  <ul class="list-group list-group-flush">
+                    <!-- <li class="list-group-item"><b text-primary>ISBN:</b>{{detail.isbn}}</li> -->
+                    <li class="list-group-item"><b text-primary>&#x1F464</b>   {{detail.user}}  </li>
+                    <li class="list-group-item"><b text-primary>&#11088</b>    {{detail.rate}}</li>
+                    <br>
+                    <li class="list-group-item"><b text-primary>Review:</b>{{detail.review}}</li>
+                  </ul>
+                  <br> </br>
+                  <br>
+                </div>
+                </tr></div>
+                {%endfor%}
+              </div>
+    </body>
+</html>
