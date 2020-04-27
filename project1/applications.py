@@ -6,6 +6,8 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import Flask, redirect, url_for, render_template, request, session
 import logging
 from Schema import *
+from review import *
+from books_db import *
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -46,6 +48,38 @@ def result():
         return render_template("Registration.html", message = var)   
     else:
         return render_template("Registration.html")
+
+@app.route("/bookpage", methods=[ 'POST', 'GET'])
+def review_page():
+    db.create_all()
+    if request.method == 'POST':
+        r = reviews(request.form["isbn"], request.form["user"], request.form["rate"], request.form["review"])
+        data2 = reviews.query.filter_by(user = request.form['user']).first()
+        data1= reviews.query.filter_by(isbn = request.form['isbn']).first()
+        temp = list(request.form.items())
+        # print(temp)
+        Isbn = temp[0][1]
+        # details = reviews.query.all()
+        details = db.session.query(reviews).filter(reviews.isbn == Isbn)
+        if data2 is not None and data1 is not None:
+            print("Sorry, You have already reviewed  book")
+            message = "Error: Sorry, You have already reviewed  book"
+            return render_template("bookpage.html", message1  = message, details = details)
+        print(r)
+        # print(db.query.all())
+        db.session.add(r)
+        db.session.commit()
+        message = "Thank you for reviewing the book"
+        return render_template("bookpage.html", message1 = message, details=details)
+    else:
+        return render_template("bookpage.html")
+
+
+# @app.route("/next")
+# def next_method():
+#     data = reviews.query.all()
+#     return render_template("next.html", next_method = data)
+
 
 @app.route('/admin')
 def admin():
