@@ -65,7 +65,7 @@
         </br>
         </br>
         <div class="mx-auto">
-            <form class="example" action="/action_page.php" style="margin:auto;max-width:700px" method = 'POST'>
+            <form class="example" style="margin:auto;max-width:700px" method = 'POST'>
                 <input type="text" placeholder="Search.." name="Search">
                 <button type="submit" formaction='/home' id="#display"><i class="fa fa-search"></i></button>
             </form>
@@ -95,7 +95,7 @@
             </div>
         </div>
         {% endif %}
-        {% if message1 %}
+        {% if error message1 %}
                 <div class = "container" style="text-align: center;">
                 <div class="alert alert-danger alert-dismissible">
                 <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
