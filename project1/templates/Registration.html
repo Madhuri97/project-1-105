@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Registration Page</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" href="{{ url_for('static', filename='icon.png') }}">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-        
-    </head> 
-    <body style="background-image: url('static/doodlebookbg.jpg'); background-size: cover; background-repeat: no-repeat;">
+{% extends "generictemplate.html" %}
+{% block links %} <link rel="shortcut icon" href="{{ url_for('static', filename='icon.png') }}"> {% endblock %}
+{% block title %}<title>Registration Page</title>{% endblock %}   
+{%  block styles %}
+<style>
+    body {
+        background-image: url('static/doodlebookbg.jpg'); background-size: cover; background-repeat: no-repeat;
+        }
+</style>  
+{% endblock %}   
+{% block body %} 
         <nav class="navbar navbar-expand-sm bg-primary justify-content-center">
         <ul class="navbar-nav">
             <li class="nav-item">
@@ -26,7 +23,7 @@
         </br>
             <form action="http://localhost:5000/register" method = "POST">
                 <div class="form-group">
-                    <label for="name">Name:</label>
+                    <label for="name"><b>Name:</b></label>
                     <input type="text" class="form-control" id="name" placeholder="Enter name" name="name">
                 </div>
             </br>
@@ -68,5 +65,4 @@
                 </div>
             {%endif%}
         </div>
-    </body>
-</html>
+ {% endblock %}   

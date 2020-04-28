@@ -98,3 +98,7 @@ def logout():
     except:
         var = "You must logout from the page"
         return render_template("Registration.html", message1 = var)
+
+@app.route('/bookpage/<id>')
+def bookpage(id):
+    return "book ISBN number: "+id
