@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Book page</title>
-  
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  <link rel="shortcut icon" href="{{ url_for('static', filename='homework.png') }}">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-</head>
-<body background="{{ url_for('static', filename='bimage.jpg') }}">
-
- 
+{% extends 'generictemplate.html' %}
+{% block links %}  <link rel="shortcut icon" href="{{ url_for('static', filename='homework.png') }}">{% endblock %}
+{% block title %} <title>Book page</title> {% endblock %}
+{%  block styles %} 
+<style>
+  body{
+    background-image: url('static/backgroundimage.jpg');
+  }
+</style>
+{% endblock %}
+{% block body %}
+    
 <div class="container">
   <div class="jumbotron">
   <h2 style = "color: blue;text-align: center;"> Book page</h2>
@@ -21,15 +17,14 @@
   <nav class="navbar navbar-dark bg-dark justify-content-between">
     <a class="navbar-brand">{{ user }}</a>
     <form class="form-inline">
-        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" formaction = '/logout'>Logout</button>
+      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" formaction = '/logout'>Logout</button>
     </form>
   </nav>
 
     <div class="card">
-      <ul class = 'b'>
+      <ul>
         {% for item in data %}
         <img src = "http://covers.openlibrary.org/b/isbn/{{item.isbn}}.jpg" width = "250" height = "250" alt = {{item.title}}/> 
-
         <li class ="list-group-item"><b>Isbn:</b>    {{item.isbn}}</li>
         <li class = "list-group-item"><b>Title:</b>  {{item.title}}</li>
         <li class = "list-group-item"><b>Author:</b> {{item.author}}</li>
@@ -46,5 +41,4 @@
    </div>
 
   </div>
-</body>
-</html>
+  {% endblock %}
