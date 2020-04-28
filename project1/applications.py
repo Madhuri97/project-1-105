@@ -40,7 +40,7 @@ def result():
         if user is not None:
             print("User already exists. try to register if you are new user")
             var = "User already exists. please try to register if you are a new user"
-            return render_template("Registration.html", message1 = var)
+            return render_template("Registration.html", errormessage1 = var)
         db.session.add(userdata)
         db.session.commit()
         var = 'Registration is successful'
@@ -64,11 +64,11 @@ def login():
         else:
             print("Wrong credentials")
             var = "Wrong Cresdentials" 
-            return render_template("Registration.html", message1 = var)
+            return render_template("Registration.html",errormessage1 = var)
     else:
         print("You are not registered user, Please first register to login")
         var = "You are not a registered user, Please first register to login"
-        return render_template("Registration.html", message1 = var)
+        return render_template("Registration.html", errormessage1 = var)
 
 @app.route("/home", methods = ['POST', 'GET'])
 def home():
@@ -81,20 +81,20 @@ def home():
             booksdata = db.session.query(Books.isbn, Books.title, Books.author, Books.year).filter(or_(Books.title.like("%"+reqs+"%"), Books.author.like("%"+reqs+"%"), Books.isbn.like("%"+reqs+"%"))).all()
             if booksdata.__len__() == 0:
                 var = "No search found!"
-                return render_template("login.html", user = user, message1 = var)
+                return render_template("login.html", user = user, errormessage1 = var)
             return render_template("login.html", booksdata = booksdata, formaction = '/home', user = user)  
         return render_template("login.html", user =user)
     except Exception as e:
         print(e)
         var = "You must login to view the homepage"
-        return render_template("Registration.html", message1 = var)
+        return render_template("Registration.html", errormessage1 = var)
 
 @app.route("/logout")
 def logout():
     try: 
         session.clear()
         var = "Logged Out"
-        return render_template("Registration.html", message1 = var)
+        return render_template("Registration.html", errormessage1 = var)
     except:
         var = "You must logout from the page"
-        return render_template("Registration.html", message1 = var)
+        return render_template("Registration.html", errormessage1 = var)
