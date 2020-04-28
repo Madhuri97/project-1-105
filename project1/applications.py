@@ -50,29 +50,35 @@ def result():
         return render_template("Registration.html")
 
 @app.route("/bookpage", methods=[ 'POST', 'GET'])
-def review_page():
-    db.create_all()
-    if request.method == 'POST':
-        r = reviews(request.form["isbn"], request.form["user"], request.form["rate"], request.form["review"])
-        data2 = reviews.query.filter_by(user = request.form['user']).first()
-        data1= reviews.query.filter_by(isbn = request.form['isbn']).first()
-        temp = list(request.form.items())
-        # print(temp)
-        Isbn = temp[0][1]
-        # details = reviews.query.all()
-        details = db.session.query(reviews).filter(reviews.isbn == Isbn)
-        if data2 is not None and data1 is not None:
-            print("Sorry, You have already reviewed  book")
-            message = "Error: Sorry, You have already reviewed  book"
-            return render_template("bookpage.html", message1  = message, details = details)
-        print(r)
-        # print(db.query.all())
-        db.session.add(r)
-        db.session.commit()
-        message = "Thank you for reviewing the book"
-        return render_template("bookpage.html", message1 = message, details=details)
-    else:
-        return render_template("bookpage.html")
+def bookpage():
+    # If the session has been created it goes to the try block
+    try:
+        user = session['email']
+        if request.method == 'POST':   #If the method is post, which we get from the html page, it enters the block.
+            r = reviews(request.form["isbn"], user, request.form["rate"], request.form["review"]) #retrieving the data
+            data = reviews.query.filter_by(user = user, isbn = request.form['isbn']).first() # It gets the user and Isbn from the form
+            temp = list(request.form.items()) 
+            # print(temp)
+            Isbn = temp[0][1]
+            # details = reviews.query.all()
+            details = db.session.query(reviews).filter(reviews.isbn == Isbn) # It collects the data from database whose Isbn is equals to the submitted form isbn
+            if data is not None: # checking whether the user name and isbn pair is in the data base, if the pair is already in the data base, it enters the block
+                print("Sorry, You have already reviewed  book")
+                error_message = "Error: Sorry, You have already reviewed  book"
+                return render_template("bookpage.html", error_message  = error_message, details = details) #returning error message and table data to the review page.
+            print(r)
+            db.session.add(r) #adding data to the database
+            db.session.commit()
+            success_message = "Thank you for reviewing the book"
+            return render_template("bookpage.html", success_message = success_message, details=details)
+        else:
+            return render_template("bookpage.html")
+    except:
+        #if the session is not created, it goes to the registration page for starting the session.
+        var = "You must login to view the homepage"
+        return render_template("Registration.html", message1 = var)
+
+
 
 
 # @app.route("/next")

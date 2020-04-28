@@ -1,70 +1,29 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Review Page</title>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" type="text/css" href="style.css">
-        <style>
-            *{
-                
-                    margin: 0;
-                    padding: 0;
-                }
-                .rate {
-                    float: left;
-                    height: 46px;
-                    padding: 0 10px;
-                }
-                .rate:not(:checked) > input {
-                    position:absolute;
-                    top:-9999px;
-                }
-                .rate:not(:checked) > label {
-                    float:right;
-                    width:1em;
-                    overflow:hidden;
-                    white-space:nowrap;
-                    cursor:pointer;
-                    font-size:30px;
-                    color:#ccc;
-                }
-                .rate:not(:checked) > label:before {
-                    content: '★ ';
-                }
-                .rate > input:checked ~ label {
-                    color: #ffc700;    
-                }
-.rate:not(:checked) > label:hover,
-.rate:not(:checked) > label:hover ~ label {
-    color: #deb217;  
-}
-.rate > input:checked + label:hover,
-.rate > input:checked + label:hover ~ label,
-.rate > input:checked ~ label:hover,
-.rate > input:checked ~ label:hover ~ label,
-.rate > label:hover ~ input:checked ~ label {
-    color: #c59b08;
-}
+{% extends 'generictemplate.html' %}
+{% block links %} <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">{% endblock %}
+{% block title %} <title>Review Page</title>{% endblock %}
+{%  block styles %}
+<style>
+    body {
+        background-image: url('static/book.gif'); 
+        background-repeat: no-repeat;
+    }
+</style>
 
-/* Modified from: https://github.com/mukulkant/Star-rating-using-pure-css */
-        </style>
-    </head>
-    <body style="background-image: url('static/book.gif'); background-repeat: no-repeat;">
-        <form formaction="http://localhost:5000/bookpage" method="POST" >
+{% endblock %}
+{% block body %}
+
+        <!-- The form starts from here, the user can give rating and review -->
+
+        <form formaction="/bookpage" method="POST" >
             <div style = "padding-bottom: 18px; font-size:24px ;">Book Review</div>
+
             <div style="padding-bottom: 18px;">ISBN<br/>
                 <input type="number"  name="isbn" style="width : 450px;" class="form-control"/>
             </div>
-            <div style="padding-bottom: 18px;">User name<br/>
-                <input type="text"  name="user" style="width : 450px;" class="form-control"/>
-            </div>
+
+            <!-- The rating is submitted from the user by pressing on these stars -->
+
             <div style="padding-bottom: 18px;">Rate this book<br/>
-                <!-- <select id="data_4" name="data_4" style="width : 150px;" class="form-control"><option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                </select> -->
             </div>
             <div class="rate">
                 <input type="radio" id="star5" name="rate" value="5" />
@@ -80,22 +39,37 @@
             </div>
            <br></br>
         </br>
+        <!-- The User can write the review here -->
                <div style="padding-bottom: 18px; align-content: flex-start;">Review<br/>
                 <textarea  style="width : 450px;" rows="9" class="form-control" name="review" ></textarea>
             </div>
             <div style="padding-bottom: 18px;"><input name="skip_Submit" value="Submit" type="submit"/></div>
         </form>
+<!-- The Form ends here -->
 
-      
-        {% if message1 %}
-            <div class = "container" style="text-align:left;">
-            <div class="alert alert-danger alert-dismissible">
-            <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            {{message1}}
-            </div>
-            </div>
+<!-- These are the alert messages -->
+        <!-- This the success message, if the user submits the review for the first time. -->
+        {% if success_message %}
+                <div class = "container" style="text-align: center;">
+                <div class="alert alert-success alert-dismissible">
+                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{success_message}}
+                </div>
+                </div>
+            </br>
             {%endif%}
-            <br>
+
+            <!-- This is the error message, if the user has already submitted the review -->
+            {% if error_message %}
+                <div class = "container" style="text-align:left;">
+                <div class="alert alert-danger alert-dismissible" style="text-align: left;">
+                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{error_message}}
+                </div>
+                </div>
+            {%endif%}
+
+            <!-- The Reviews of the chosen books  appears here  -->
             <h1> Reviews</h1>
             <div>
                 {% for detail in details %}
@@ -115,5 +89,5 @@
                 </tr></div>
                 {%endfor%}
               </div>
-    </body>
+              {% endblock %}
 </html>
