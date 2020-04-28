@@ -88,7 +88,15 @@ def logout():
         var = "You must logout from the page"
         return render_template("Registration.html", message1 = var)
 
+# Book page route
 @app.route("/bookpage/<id>")
+# Book page method starts here.
 def bookpage(id):
-    booksdata = db.session.query(Books).filter(Books.isbn == id)
-    return render_template("bookpage.html", data = booksdata)
+    try:
+        user = session['email']
+        booksdata = db.session.query(Books).filter(Books.isbn == id)
+        return render_template("bookpage.html", data = booksdata)
+    except:
+        var = "You must login to view the homepage"
+        return render_template("Registration.html", message1 = var)
+# Book page method ends here.
