@@ -54,29 +54,38 @@ def bookpage(id):
     # If the session has been created it goes to the try block
     try:
         user = session['email']
+        print(user)
         if request.method == 'POST':   #If the method is post, which we get from the html page, it enters the block.
             r = reviews(id, user, request.form["rate"], request.form["review"]) #retrieving the data
-            data = reviews.query.filter_by(user = user, isbn = id).first() # It gets the user and Isbn from the form
+            # data = reviews.query.filter_by(user = user, isbn = id).first() # It gets the user and Isbn from the form
             # print(temp)
             # details = reviews.query.all()
-            details = db.session.query(reviews).filter(reviews.isbn == id) # It collects the data from database whose Isbn is equals to the submitted form isbn
-            if data is not None: # checking whether the user name and isbn pair is in the data base, if the pair is already in the data base, it enters the block
+            booksdata = db.session.query(Books).filter(Books.isbn == id)
+            details = db.session.query(reviews).filter(reviews.isbn == id, reviews.user == user).all() # It collects the data from database whose Isbn is equals to the submitted form isbn
+            print(details)
+            user_reviews = db.session.query(reviews).filter(reviews.isbn == id).all()
+            if details.__len__() != 0: # checking whether the user name and isbn pair is in the data base, if the pair is already in the data base, it enters the block
                 print("Sorry, You have already reviewed  book")
                 error_message = "Error: Sorry, You have already reviewed  book"
-                return render_template("bookpage.html", error_message  = error_message, details = details) #returning error message and table data to the review page.
+                return render_template("bookpage.html", error_message  = error_message, details = details, user_reviews = user_reviews, data = booksdata) #returning error message and table data to the review page.
             print(r)
             db.session.add(r) #adding data to the database
             db.session.commit()
-            success_message = "Thank you for reviewing the book"
-            return render_template("bookpage.html", success_message = success_message, details=details)
-        else:
-            details = db.session.query(reviews).filter(reviews.isbn == Isbn)
             booksdata = db.session.query(Books).filter(Books.isbn == id)
-            return render_template("bookpage.html", data = booksdata, details= details)
-    except:
+            details = db.session.query(reviews).filter(reviews.isbn == id, reviews.user == user).all() # It collects the data from database whose Isbn is equals to the submitted form isbn
+            user_reviews = db.session.query(reviews).filter(reviews.isbn == id).all()
+            success_message = "Thank you for reviewing the book"
+            return render_template("bookpage.html", success_message = success_message, details=details, user_reviews = user_reviews, data = booksdata)
+        else:
+            details = db.session.query(reviews).filter(reviews.isbn == id, reviews.user == user).all()
+            booksdata = db.session.query(Books).filter(Books.isbn == id)
+            user_reviews = db.session.query(reviews).filter(reviews.isbn == id).all()
+            return render_template("bookpage.html", data = booksdata, details= details, user_reviews = user_reviews)
+    except Exception as e:
+        print(e)
         #if the session is not created, it goes to the registration page for starting the session.
         var = "You must login to view the homepage"
-        return render_template("Registration.html", message1 = var)
+        return render_template("Registration.html", message = var)
 #This route ends here
 
 @app.route('/admin')

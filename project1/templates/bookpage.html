@@ -1,4 +1,4 @@
-{% extends generictemplate.html %}
+{% extends "generictemplate.html" %}
 {% block links %}  <link rel="shortcut icon" href="{{ url_for('static', filename='homework.png') }}">
 <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
 {% endblock %}
@@ -37,15 +37,13 @@
 
     <div >
       <ul class="list-group">
-        <li class="list-group-item" style = "color:blue; text-align: center">
+        <li class="list-group-item" style = "color:blue; text-align: center"></li>
+      </ul>
         
         <!-- The form starts from here, the user can give rating and review -->
 
         <form formaction="/bookpage" method="POST" >
             <div style = "padding-bottom: 18px; font-size:24px ;">Book Review</div>
-
-            
-
             <!-- The rating is submitted from the user by pressing on these stars -->
 
             <div style="padding-bottom: 18px;">Rate this book<br/>
@@ -65,61 +63,54 @@
            <br></br>
         </br>
         <!-- The User can write the review here -->
-               <div style="padding-bottom: 18px; align-content: flex-start;">Review<br/>
-                <textarea  style="width : 450px;" rows="9" class="form-control" name="review" ></textarea>
+            <div style="padding-bottom: 18px; align-content: flex-start;">Review<br/>
+                <textarea  style="width : 500px;" rows="6" class="form-control" name="review" ></textarea>
             </div>
-            <div style="padding-bottom: 18px;"><input name="skip_Submit" value="Submit" type="submit"/></div>
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" id="#view" formaction = "/bookpage/{{data[0].isbn}}" formmethod = 'POST'>Submit</button>
+            <!--<div style="padding-bottom: 18px;"><input name="skip_Submit" value="Submit" type="submit"/></div>-->
         </form>
 <!-- The Form ends here -->
 
 <!-- These are the alert messages -->
-        <!-- This the success message, if the user submits the review for the first time. -->
-        {% if success_message %}
-                <div class = "container" style="text-align: center;">
-                <div class="alert alert-success alert-dismissible">
-                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                {{success_message}}
-                </div>
-                </div>
-            </br>
-            {%endif%}
+<!-- This the success message, if the user submits the review for the first time. -->
+{% if success_message %}
+    <div class = "container" style="text-align: center;">
+    <div class="alert alert-success alert-dismissible">
+    <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    {{success_message}}
+    </div>
+    </div>
+</br>
+{%endif%}
 
-            <!-- This is the error message, if the user has already submitted the review -->
-            {% if error_message %}
-                <div class = "container" style="text-align:left;">
-                <div class="alert alert-danger alert-dismissible" style="text-align: left;">
-                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                {{error_message}}
-                </div>
-                </div>
-            {%endif%}
+<!-- This is the error message, if the user has already submitted the review -->
+{% if error_message %}
+    <div class = "container" style="text-align:left;">
+    <div class="alert alert-danger alert-dismissible" style="text-align: left;">
+    <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    {{error_message}}
+    </div>
+    </div>
+{%endif%}
 
-            <!-- The Reviews of the chosen books  appears here  -->
-            <h1> Reviews</h1>
-            <div>
-                {% for detail in details %}
-                <!-- <h1 id="view" style = "text-align:center"> Reviews</h1> -->
-                <tr><div >
-                <div class="card" style="width: 18rem;">
-                  <ul class="list-group list-group-flush">
-                    <!-- <li class="list-group-item"><b text-primary>ISBN:</b>{{detail.isbn}}</li> -->
-                    <li class="list-group-item"><b text-primary>&#x1F464</b>   {{detail.user}}  </li>
-                    <li class="list-group-item"><b text-primary>&#11088</b>    {{detail.rate}}</li>
-                    <br>
-                    <li class="list-group-item"><b text-primary>Review:</b>{{detail.review}}</li>
-                  </ul>
-                  <br> </br>
-                  <br>
-                </div>
-                </tr></div>
-                {%endfor%}
-              </div>
-        
-        </li>
-      </ul>
+<!-- The Reviews of the chosen books  appears here  -->
+    <div>
+      <h1 id="view"> Reviews</h1>
+      <tr>
+      {% for detail in user_reviews %}
+      <h1 style = "text-align:center"></h1>
+      <div class="card" style="width: 20rem; align:center">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><b text-primary>&#x1F464: </b>{{detail.user}} </li>
+          <li class="list-group-item"><b text-primary>&#11088: </b>{{detail.rate}}</li>
+          <li class="list-group-item"><b text-primary>&#x1F4AC: </b>{{detail.review}}</li>
+        </ul>
+      </div>
+      </tr>
+      {%endfor%}
+    </div>
     </div>
    </div>
-
   </div>
   {% endblock %}
 
