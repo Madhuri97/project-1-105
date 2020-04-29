@@ -1,5 +1,7 @@
-{% extends 'generictemplate.html' %}
-{% block links %}  <link rel="shortcut icon" href="{{ url_for('static', filename='homework.png') }}">{% endblock %}
+{% extends generictemplate.html %}
+{% block links %}  <link rel="shortcut icon" href="{{ url_for('static', filename='homework.png') }}">
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock %}
 {% block title %} <title>Book page</title> {% endblock %}
 {%  block styles %} 
 <style>
@@ -35,10 +37,89 @@
 
     <div >
       <ul class="list-group">
-        <li class="list-group-item" style = "color:blue; text-align: center"><b>Review</b></li>
+        <li class="list-group-item" style = "color:blue; text-align: center">
+        
+        <!-- The form starts from here, the user can give rating and review -->
+
+        <form formaction="/bookpage" method="POST" >
+            <div style = "padding-bottom: 18px; font-size:24px ;">Book Review</div>
+
+            
+
+            <!-- The rating is submitted from the user by pressing on these stars -->
+
+            <div style="padding-bottom: 18px;">Rate this book<br/>
+            </div>
+            <div class="rate">
+                <input type="radio" id="star5" name="rate" value="5" />
+                <label for="star5" title="text">5</label>
+                <input type="radio" id="star4" name="rate" value="4" />
+                <label for="star4" title="text">4 </label>
+                <input type="radio" id="star3" name="rate" value="3" />
+                <label for="star3" title="text">3 </label>
+                <input type="radio" id="star2" name="rate" value="2" />
+                <label for="star2" title="text">2 </label>
+                <input type="radio" id="star1" name="rate" value="1" />
+                <label for="star1" title="text">1 </label>
+            </div>
+           <br></br>
+        </br>
+        <!-- The User can write the review here -->
+               <div style="padding-bottom: 18px; align-content: flex-start;">Review<br/>
+                <textarea  style="width : 450px;" rows="9" class="form-control" name="review" ></textarea>
+            </div>
+            <div style="padding-bottom: 18px;"><input name="skip_Submit" value="Submit" type="submit"/></div>
+        </form>
+<!-- The Form ends here -->
+
+<!-- These are the alert messages -->
+        <!-- This the success message, if the user submits the review for the first time. -->
+        {% if success_message %}
+                <div class = "container" style="text-align: center;">
+                <div class="alert alert-success alert-dismissible">
+                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{success_message}}
+                </div>
+                </div>
+            </br>
+            {%endif%}
+
+            <!-- This is the error message, if the user has already submitted the review -->
+            {% if error_message %}
+                <div class = "container" style="text-align:left;">
+                <div class="alert alert-danger alert-dismissible" style="text-align: left;">
+                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{error_message}}
+                </div>
+                </div>
+            {%endif%}
+
+            <!-- The Reviews of the chosen books  appears here  -->
+            <h1> Reviews</h1>
+            <div>
+                {% for detail in details %}
+                <!-- <h1 id="view" style = "text-align:center"> Reviews</h1> -->
+                <tr><div >
+                <div class="card" style="width: 18rem;">
+                  <ul class="list-group list-group-flush">
+                    <!-- <li class="list-group-item"><b text-primary>ISBN:</b>{{detail.isbn}}</li> -->
+                    <li class="list-group-item"><b text-primary>&#x1F464</b>   {{detail.user}}  </li>
+                    <li class="list-group-item"><b text-primary>&#11088</b>    {{detail.rate}}</li>
+                    <br>
+                    <li class="list-group-item"><b text-primary>Review:</b>{{detail.review}}</li>
+                  </ul>
+                  <br> </br>
+                  <br>
+                </div>
+                </tr></div>
+                {%endfor%}
+              </div>
+        
+        </li>
       </ul>
     </div>
    </div>
 
   </div>
   {% endblock %}
+

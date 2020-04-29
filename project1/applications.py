@@ -6,7 +6,9 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import Flask, url_for, render_template, request, session
 import logging
 from Schema import *
+from review import *
 from books_db import *
+
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -43,7 +45,40 @@ def result():
     else:
         return render_template("Registration.html")
 
-# this is for the display of users details for the website admin
+
+#Bookpage route starts here
+#get-renders bookpage, 
+#Post-renders review.
+@app.route("/bookpage/<id>", methods=[ 'POST', 'GET'])
+def bookpage(id):
+    # If the session has been created it goes to the try block
+    try:
+        user = session['email']
+        if request.method == 'POST':   #If the method is post, which we get from the html page, it enters the block.
+            r = reviews(id, user, request.form["rate"], request.form["review"]) #retrieving the data
+            data = reviews.query.filter_by(user = user, isbn = id).first() # It gets the user and Isbn from the form
+            # print(temp)
+            # details = reviews.query.all()
+            details = db.session.query(reviews).filter(reviews.isbn == id) # It collects the data from database whose Isbn is equals to the submitted form isbn
+            if data is not None: # checking whether the user name and isbn pair is in the data base, if the pair is already in the data base, it enters the block
+                print("Sorry, You have already reviewed  book")
+                error_message = "Error: Sorry, You have already reviewed  book"
+                return render_template("bookpage.html", error_message  = error_message, details = details) #returning error message and table data to the review page.
+            print(r)
+            db.session.add(r) #adding data to the database
+            db.session.commit()
+            success_message = "Thank you for reviewing the book"
+            return render_template("bookpage.html", success_message = success_message, details=details)
+        else:
+            details = db.session.query(reviews).filter(reviews.isbn == Isbn)
+            booksdata = db.session.query(Books).filter(Books.isbn == id)
+            return render_template("bookpage.html", data = booksdata, details= details)
+    except:
+        #if the session is not created, it goes to the registration page for starting the session.
+        var = "You must login to view the homepage"
+        return render_template("Registration.html", message1 = var)
+#This route ends here
+
 @app.route('/admin')
 def admin():
     alludata = schema.query.order_by(desc(schema.createtimestamp)).all()
@@ -99,15 +134,3 @@ def logout():
         var = "You must logout from the page"
         return render_template("Registration.html", message1 = var)
 
-# Book page route
-@app.route("/bookpage/<id>")
-# Book page method starts here.
-def bookpage(id):
-    try:
-        user = session['email']
-        booksdata = db.session.query(Books).filter(Books.isbn == id)
-        return render_template("bookpage.html", data = booksdata)
-    except:
-        var = "You must login to view the homepage"
-        return render_template("Registration.html", message1 = var)
-# Book page method ends here.
