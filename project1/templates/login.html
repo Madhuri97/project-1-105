@@ -1,4 +1,6 @@
+<!-- included similar tags as a extends from generic template -->
 {% extends "generictemplate.html" %}
+<!--This is for the icon display-->
 {% block links %} <link rel="shortcut icon" href="{{ url_for('static', filename='icon.png') }}"> {% endblock %}
 {% block title %}<title>Login Page</title>{% endblock %} 
 {%  block styles %} 
@@ -48,7 +50,7 @@
 </style>
 {% endblock %}   
 {% block body %}
-    
+        <!--Navbar which displays user email and logout button-->
         <nav class="navbar navbar-dark bg-dark justify-content-between">
         <a class="navbar-brand text-primary">&#128103&#127995: {{ user }}</a>
         <form class="form-inline">
@@ -58,6 +60,7 @@
         </br>
         </br>
         </br>
+        <!--This is for search area with icon search-->
         <div class="mx-auto">
             <form class="example" style="margin:auto;max-width:700px" method = 'POST'>
                 <input type="text" placeholder="Search.." name="Search">
@@ -66,6 +69,7 @@
         </div>
         </br>
         </br>
+        <!--This is to display table after search-->
         {% if formaction == '/home'  %}
         <h1 id = "display" style = "text-align:center">Books</h1><br>
         <div class="container">
@@ -89,6 +93,7 @@
             </div>
         </div>
         {% endif %}
+        <!--Alert Message-->
         {% if errormessage1 %}
                 <div class = "container" style="text-align: center;">
                 <div class="alert alert-danger alert-dismissible">

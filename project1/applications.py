@@ -13,11 +13,9 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 
 # Check for environment variable
-# if not os.getenv("DATABASE_URL"):
-#     raise RuntimeError("DATABASE_URL is not set")
-
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -26,8 +24,6 @@ db.init_app(app)
 
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
-# Session = scoped_session(sessionmaker(bind=engine))
-# session = Session()
 
 #set up routes
 @app.route("/")
@@ -48,11 +44,13 @@ def result():
     else:
         return render_template("Registration.html")
 
+# this is for the display of users details for the website admin
 @app.route('/admin')
 def admin():
     alludata = schema.query.order_by(desc(schema.createtimestamp)).all()
     return render_template("admin.html", admin = alludata)
 
+#this is used to find whether the user is authenticated or not
 @app.route('/authen', methods = ['POST'])
 def login():
     user = schema.query.filter_by(email = request.form['email']).first()
@@ -70,6 +68,7 @@ def login():
         var = "You are not a registered user, Please first register to login"
         return render_template("Registration.html", errormessage1 = var)
 
+#this is used to get the search only after login
 @app.route("/home", methods = ['POST', 'GET'])
 def home():
     try: 
@@ -78,6 +77,7 @@ def home():
             req = request.form['Search']
             print(req)
             reqs = str(req)
+            #partial search 
             booksdata = db.session.query(Books.isbn, Books.title, Books.author, Books.year).filter(or_(Books.title.like("%"+reqs+"%"), Books.author.like("%"+reqs+"%"), Books.isbn.like("%"+reqs+"%"))).all()
             if booksdata.__len__() == 0:
                 var = "No search found!"
@@ -89,6 +89,7 @@ def home():
         var = "You must login to view the homepage"
         return render_template("Registration.html", errormessage1 = var)
 
+#route after logout is done by the user
 @app.route("/logout")
 def logout():
     try: 
@@ -99,6 +100,7 @@ def logout():
         var = "You must logout from the page"
         return render_template("Registration.html", message1 = var)
 
+#basic bookpage which displays isbn number to the bookpage
 @app.route('/bookpage/<id>')
 def bookpage(id):
     return "book ISBN number: "+id
