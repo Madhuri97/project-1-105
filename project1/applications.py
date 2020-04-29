@@ -95,10 +95,10 @@ def logout():
     try: 
         session.clear()
         var = "Logged Out"
-        return render_template("Registration.html", errormessage1 = var)
+        return render_template("Registration.html", message = var)
     except:
         var = "You must logout from the page"
-        return render_template("Registration.html", message1 = var)
+        return render_template("Registration.html", errormessage1 = var)
 
 #basic bookpage which displays isbn number to the bookpage
 @app.route('/bookpage/<id>')

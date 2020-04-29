@@ -27,7 +27,7 @@
             <h3 class="text-primary">Registration Page</h3>
         </br>
         <!--bootstrap form with name, email and password as a feilds-->
-            <form>
+            <form method="POST" action = "/register">
                 <div class="form-group">
                     <label for="name"><b>Name:</b></label>
                     <input type="text" class="form-control" id="name" placeholder="Enter name" name="name">
@@ -51,7 +51,7 @@
             </br>
             <!--Login and Registration buttons -->
                 <button type="submit" class="btn btn-primary"><b>Register</b></button>
-                <button type="submit" class="btn btn-primary" formaction = "http://127.0.0.1:5000/authen"><b>Login</b></button>
+                <button type="submit" class="btn btn-primary" formaction = "/authen"><b>Login</b></button>
             </form>  
             </br>
             <!--Alerts using jinja template-->
@@ -64,11 +64,11 @@
                 </div>
             </br>
             {%endif%}
-            {% if message1 %}
+            {% if errormessage1 %}
                 <div class = "container" style="text-align: center;">
                 <div class="alert alert-danger alert-dismissible">
                 <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                {{message1}}
+                {{errormessage1}}
                 </div>
                 </div>
             {%endif%}
