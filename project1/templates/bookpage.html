@@ -1,25 +1,50 @@
-{% extends 'generictemplate.html' %}
-{% block links %} <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">{% endblock %}
-{% block title %} <title>Review Page</title>{% endblock %}
-{%  block styles %}
+{% extends generictemplate.html %}
+{% block links %}  <link rel="shortcut icon" href="{{ url_for('static', filename='homework.png') }}">
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock %}
+{% block title %} <title>Book page</title> {% endblock %}
+{%  block styles %} 
 <style>
-    body {
-        background-image: url('static/book.gif'); 
-        background-repeat: no-repeat;
-    }
+  body{
+    background-image: url('static/backgroundimage.jpg');
+  }
 </style>
-
 {% endblock %}
 {% block body %}
+    
+<div class="container">
+  <div class="jumbotron">
+  <h2 style = "color: blue;text-align: center;"> Book page</h2>
+  <p style = "color: black;text-align: center;">Below are the book details</p>
+  <nav class="navbar navbar-dark bg-dark justify-content-between">
+    <a class="navbar-brand">{{ user }}</a>
+    <form class="form-inline">
+      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" formaction = '/logout'>Logout</button>
+    </form>
+  </nav>
 
+    <div class="card">
+      <ul>
+        {% for item in data %}
+        <img src = "http://covers.openlibrary.org/b/isbn/{{item.isbn}}.jpg" width = "250" height = "250" alt = {{item.title}}/> 
+        <li class ="list-group-item"><b>Isbn:</b>    {{item.isbn}}</li>
+        <li class = "list-group-item"><b>Title:</b>  {{item.title}}</li>
+        <li class = "list-group-item"><b>Author:</b> {{item.author}}</li>
+        <li class = "list-group-item"><b>Year:</b>   {{item.year}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div >
+      <ul class="list-group">
+        <li class="list-group-item" style = "color:blue; text-align: center">
+        
         <!-- The form starts from here, the user can give rating and review -->
 
         <form formaction="/bookpage" method="POST" >
             <div style = "padding-bottom: 18px; font-size:24px ;">Book Review</div>
 
-            <div style="padding-bottom: 18px;">ISBN<br/>
-                <input type="number"  name="isbn" style="width : 450px;" class="form-control"/>
-            </div>
+            
 
             <!-- The rating is submitted from the user by pressing on these stars -->
 
@@ -89,5 +114,12 @@
                 </tr></div>
                 {%endfor%}
               </div>
-              {% endblock %}
-</html>
+        
+        </li>
+      </ul>
+    </div>
+   </div>
+
+  </div>
+  {% endblock %}
+
