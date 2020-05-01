@@ -3,6 +3,40 @@
 {% block links %} <link rel="shortcut icon" href="{{ url_for('static', filename='icon.png') }}"> {% endblock %}
 {% block title %}<title>Registration Page</title>{% endblock %}   
 {%  block styles %}
+<script type = "text/javascript">
+function checkPassword(str)
+  {
+  var validpwd = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+  return validpwd.test(str);
+  }
+function checkEmail(mail) {
+    if(/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(mail)) {
+        return true
+    }
+    return false
+}
+function checkForm(form) {
+    if(form.email.value == "") {
+        document.getElementById("textdisplay").innerHTML = "Error: Name cannot be blank Please, fill this field!";
+        return false;
+    } else if(!checkEmail(form.email.value)) {
+        document.getElementById("textdisplay").innerHTML = "Please enter valid email address";
+        return false;
+    } else {
+        if(form.pswd.value != "") {
+            if(!checkPassword(form.pswd.value)) {
+                document.getElementById("textdisplay").innerHTML="Given password should have at least 6 characters, with at least one uppercase letter, one lowercase letter, one number and one symbol";
+            return false;
+            }
+        } else {
+            document.getElementById("textdisplay").innerHTML = "Error: Password cannot be blank";
+            return false;
+        }
+    } 
+    return true;
+}
+</script>
+
 <!-- Background image -->
 <style>
     body {
@@ -10,8 +44,10 @@
         }
 </style>  
 {% endblock %} 
+
 <!-- body block -->  
 {% block body %} 
+
         <!--Navbar with title-->
         <nav class="navbar navbar-expand-sm bg-primary justify-content-center">
         <ul class="navbar-nav">
@@ -21,13 +57,15 @@
         </ul>
         </nav>
         <br>
+
         <!--Header-->
         <div class="container">
         </br>
             <h3 class="text-primary">Registration Page</h3>
         </br>
+
         <!--bootstrap form with name, email and password as a feilds-->
-            <form method="POST" action = "/register">
+            <form method="POST" action = "/register" onsubmit="return checkForm(this);">
                 <div class="form-group">
                     <label for="name"><b>Name:</b></label>
                     <input type="text" class="form-control" id="name" placeholder="Enter name" name="name">
@@ -35,7 +73,7 @@
             </br>
                 <div class="form-group">
                   <label for="email">Email:</label>
-                  <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                  <input type="text" class="form-control" id="email" placeholder="Enter email" name="email">
                 </div>
             </br>
                 <div class="form-group">
@@ -49,11 +87,14 @@
                   </label>
                 </div>
             </br>
+
             <!--Login and Registration buttons -->
                 <button type="submit" class="btn btn-primary"><b>Register</b></button>
                 <button type="submit" class="btn btn-primary" formaction = "/authen"><b>Login</b></button>
+                <p style="text-align: center; color: primary;" id = "textdisplay"></p>
             </form>  
             </br>
+
             <!--Alerts using jinja template-->
             {% if message %}
                 <div class = "container" style="text-align: center;">
