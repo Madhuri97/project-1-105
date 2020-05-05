@@ -1,5 +1,5 @@
 import os
-from flask import Flask, session, redirect
+from flask import Flask, session, redirect, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine, desc, or_
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -8,6 +8,7 @@ import logging
 from Schema import *
 from review import *
 from books_db import *
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -96,6 +97,7 @@ def admin():
 #this is used to find whether the user is authenticated or not
 @app.route('/authen', methods = ['POST'])
 def login():
+    print("here")
     user = schema.query.filter_by(email = request.form['email']).first()
     if user is not None:
         if  request.form["pswd"] == user.pwd:
@@ -116,7 +118,9 @@ def login():
 def home():
     try: 
         user = session['email']
+        print("this")
         if request.method == 'POST':
+            print("sharanya")
             req = request.form['Search']
             print(req)
             reqs = str(req)
@@ -143,3 +147,37 @@ def logout():
         var = "You must logout from the page"
         return render_template("Registration.html", message1 = var)
 
+# Third route -- Review submission
+@app.route('/api/submitReview', methods  =['POST'])
+def submitreview():
+    if not request.is_json:
+        message = "Invalid request format"
+        # print("here1");
+        return jsonify(message),400
+    isbn = request.args.get("isbn")
+    try:
+        result = db.session.query(Books).filter(Books.isbn == isbn).first()
+    except:
+        message = "Please Try again Later"
+        return jsonify(message),500
+    if result is None:
+        print("here");
+        message = "Please enter valid ISBN"
+        return jsonify(message), 404
+    rate = request.get_json()['rate']
+    review = request.get_json()['review']
+    email = request.get_json()['email']
+    user = reviews.query.filter_by(user=email,isbn=isbn).first()
+    if user is not None:
+        message = "Sorry you can't review this book again"
+        return jsonify(message), 409
+    reviewdata=reviews(isbn,email,rate,review)
+    try:
+        db.session.add(reviewdata)
+        db.session.commit()
+    except:
+        message = "Please Try Again "
+        return jsonify(message), 500
+    # print(isbn,rating,comment)
+    message = "Review submitted successfully"
+    return jsonify(message), 200

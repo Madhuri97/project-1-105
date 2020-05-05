@@ -1,7 +1,9 @@
 <!-- included similar tags as a extends from generic template -->
 {% extends "generictemplate.html" %}
 <!--This is for the icon display-->
-{% block links %} <link rel="shortcut icon" href="{{ url_for('static', filename='icon.png') }}"> {% endblock %}
+{% block links %} <link rel="shortcut icon" href="{{ url_for('static', filename='icon.png') }}"> 
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock %}
 {% block title %}<title>Login Page</title>{% endblock %} 
 {%  block styles %} 
 <style>
@@ -48,11 +50,52 @@
         display: block;
         }
 </style>
+
+{% block scripts%}
+<script type = "text/javascript"> 
+
+function reviewapi(ele) {
+    var email= document.getElementById("email").innerText
+    // console.log(temp);
+    var isbn = "1416949658";
+    var xhr = new XMLHttpRequest();
+    var form = new FormData(document.getElementById("reviewform"));
+    var rating = form.get("rate");
+    var comment=form.get("review")
+    xhr.open("POST", "/api/submitReview?isbn="+isbn, true);
+    xhr.setRequestHeader("Content-type", "application/json");
+    let json = JSON.stringify ({
+    "rate": rating,
+    "review":comment,
+    "email":email
+  });
+  xhr.send(json);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+      var data = JSON.parse(xhr.responseText);
+      console.log(data)
+      document.getElementById("msg_display").innerHTML = "Review Submitted Successfully";
+    } else  {
+        var data = JSON.parse(xhr.responseText);
+        console.log(data)
+        document.getElementById("msg_display").innerHTML = "You have already reviewed the book";
+    }
+
+  }
+}
+    
+</script>
+{% endblock %}
+
+
+
+
+    </script>
 {% endblock %}   
 {% block body %}
         <!--Navbar which displays user email and logout button-->
         <nav class="navbar navbar-dark bg-dark justify-content-between">
-        <a class="navbar-brand text-primary">&#128103&#127995: {{ user }}</a>
+        <a class="navbar-brand text-primary" id="email"> {{ user }}</a>
         <form class="form-inline">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" formaction = '/logout'>Logout</button>
         </form>
@@ -61,45 +104,34 @@
         </br>
         </br>
         <!--This is for search area with icon search-->
-        <div class="mx-auto">
-            <form class="example" style="margin:auto;max-width:700px" method = 'POST'>
-                <input type="text" placeholder="Search.." name="Search">
-                <button type="submit" formaction='/home' id="#display"><i class="fa fa-search"></i></button>
-            </form>
-        </div>
-        </br>
-        </br>
-        <!--This is to display table after search-->
-        {% if formaction == '/home'  %}
-        <h1 id = "display" style = "text-align:center">Books</h1><br>
-        <div class="container">
-            <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                <table xlass = "table" border = 1 align = "center" class="table table-striped">
-                    <th class="bg-secondary text-white"> {{ "ISBN" }}</th>
-                    <th class="bg-secondary text-white"> {{ "Title" }}</th>
-                    <th class="bg-secondary text-white"> {{ "Author" }}</th>
-                    <th class="bg-secondary text-white"> {{ "Year" }}</th>
-                    <th class="bg-secondary text-white"> {{ "View Book Page" }}</th>
-                    {% for i in booksdata %}
-                        <tr>
-                            <td> {{ i.isbn}} </td>
-                            <td> {{ i.title}} </td>
-                            <td> {{ i.author}} </td>
-                            <td> {{ i.year }}</td>
-                            <td><a href = "{{ url_for("bookpage", id = i.isbn)}}">Click Here</a></td>
-                        </tr>
-                    {% endfor %}
-                </table>
+        <form id = "reviewform" method="POST" onsubmit="event.preventDefault();reviewapi(this)" >
+            <div style = "padding-bottom: 18px; font-size:24px ;">Book Review</div>
+            <!-- The rating is submitted from the user by pressing on these stars -->
+
+            <div style="padding-bottom: 18px;">Rate this book<br/>
             </div>
-        </div>
-        {% endif %}
-        <!--Alert Message-->
-        {% if errormessage1 %}
-                <div class = "container" style="text-align: center;">
-                <div class="alert alert-danger alert-dismissible">
-                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                {{errormessage1}}
-                </div>
-                </div>
-        {%endif%}
+            <div class="rate">
+                <input type="radio" id="star5" name="rate" value="5" />
+                <label for="star5" title="text">5</label>
+                <input type="radio" id="star4" name="rate" value="4" />
+                <label for="star4" title="text">4 </label>
+                <input type="radio" id="star3" name="rate" value="3" />
+                <label for="star3" title="text">3 </label>
+                <input type="radio" id="star2" name="rate" value="2" />
+                <label for="star2" title="text">2 </label>
+                <input type="radio" id="star1" name="rate" value="1" />
+                <label for="star1" title="text">1 </label>
+            </div>
+           <br></br>
+        </br>
+        <!-- The User can write the review here -->
+            <div style="padding-bottom: 18px; align-content: flex-start;">Review<br/>
+                <textarea  style="width : 500px;" rows="6" class="form-control" name="review" ></textarea>
+            </div>
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"  id="1416949658"  >Submit</button>
+            <!--<div style="padding-bottom: 18px;"><input name="skip_Submit" value="Submit" type="submit"/></div>-->
+            <p style="text-align: center; color: primary;" id = "msg_display"></p>
+        </form>
+        <div id = "htmltext"></div>
+
     {% endblock %}
