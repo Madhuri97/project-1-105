@@ -1,5 +1,5 @@
 import os
-from flask import Flask, session, redirect
+from flask import Flask, session, redirect, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine, desc, or_
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -142,4 +142,37 @@ def logout():
     except:
         var = "You must logout from the page"
         return render_template("Registration.html", message1 = var)
+
+# start of book api route
+@app.route('/api/book')
+def apibook():
+    query = request.args.get('isbn')
+    print(query)
+    try:
+        booksdata = db.session.query(Books).filter(Books.isbn == query).first()
+        details = db.session.query(reviews).filter(reviews.isbn == query).all() 
+    except Exception as e:
+        print(e)
+        message = "Please try again"
+        return jsonify(message),500
+    if booksdata is None:
+        message = "No book found"
+        return jsonify(message), 404
+    response = {}
+    reviewss= []
+    print(reviewss)
+    for review in details:
+        eachreview = {}
+        eachreview["email"] = review.user
+        eachreview["rate"] = review.rate
+        eachreview["review"] = review.review
+        reviewss.append(eachreview)
+    response["isbn"] = booksdata.isbn
+    response["title"] = booksdata.title
+    response["author"] = booksdata.author
+    response["year"] = booksdata.year
+    response["reviews"] = reviewss
+    print(response)
+    return jsonify(response),200
+# end of the book api route
 
