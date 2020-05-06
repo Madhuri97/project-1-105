@@ -77,9 +77,11 @@ function SearchApi( ) {
       htmltext = htmltext + " </tbody> </table> </div></div>"
       document.getElementById("htmltext").innerHTML = htmltext;
     } else if(xhr.status == 404) {
+      alert("Page not found");
       console.log("Error: Page Not Found");
     } else {
       console.log("Error: Please Try again");
+      alert("Please try again");
     } 
     console.log(data);
   }
