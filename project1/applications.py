@@ -136,11 +136,13 @@ def logout():
         var = "You must logout from the page"
         return render_template("Registration.html", message1 = var)
 
+#route admin
 @app.route('/admin')
 def admin():
     alludata = schema.query.order_by(desc(schema.createtimestamp)).all()
     return render_template("admin.html", admin = alludata)
 
+#Json api route 
 @app.route('/api/search', methods = ["POST"])
 def apiSearch():
     if not request.is_json:
