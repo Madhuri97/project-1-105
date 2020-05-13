@@ -45,6 +45,43 @@ def result():
     else:
         return render_template("Registration.html")
 
+#this is used to find whether the user is authenticated or not
+@app.route('/authen', methods = ['POST'])
+def login():
+    user = schema.query.filter_by(email = request.form['email']).first()
+    if user is not None:
+        if  request.form["pswd"] == user.pwd:
+            session['email'] = request.form['email']
+            print(session)
+            return redirect('/home')
+        else:
+            var = "Wrong Cresdentials" 
+            return render_template("Registration.html",errormessage1 = var)
+    else:
+        print("You are not registered user, Please first register to login")
+        var = "You are not a registered user, Please first register to login"
+        return render_template("Registration.html", errormessage1 = var)
+
+#this is used to get the search only after login
+@app.route("/home", methods = ['POST', 'GET'])
+def home():
+    try: 
+        user = session['email']
+        if request.method == 'POST':
+            req = request.form['Search']
+            print(req)
+            reqs = str(req)
+            #partial search 
+            booksdata = db.session.query(Books.isbn, Books.title, Books.author, Books.year).filter(or_(Books.title.like("%"+reqs+"%"), Books.author.like("%"+reqs+"%"), Books.isbn.like("%"+reqs+"%"))).all()
+            if booksdata.__len__() == 0:
+                var = "No search found!"
+                return render_template("login.html", user = user, errormessage1 = var)
+            return render_template("login.html", booksdata = booksdata, formaction = '/home', user = user)  
+        return render_template("login.html", user =user)
+    except Exception as e:
+        print(e)
+        var = "You must login to view the homepage"
+        return render_template("Registration.html", errormessage1 = var)
 
 #Bookpage route starts here
 #get-renders bookpage, 
@@ -87,50 +124,6 @@ def bookpage(id):
         var = "You must login to view the homepage"
         return render_template("Registration.html", message = var)
 #This route ends here
-
-@app.route('/admin')
-def admin():
-    alludata = schema.query.order_by(desc(schema.createtimestamp)).all()
-    return render_template("admin.html", admin = alludata)
-
-#this is used to find whether the user is authenticated or not
-@app.route('/authen', methods = ['POST'])
-def login():
-    user = schema.query.filter_by(email = request.form['email']).first()
-    if user is not None:
-        if  request.form["pswd"] == user.pwd:
-            session['email'] = request.form['email']
-            print(session)
-            return redirect('/home')
-        else:
-            print("Wrong credentials")
-            var = "Wrong Cresdentials" 
-            return render_template("Registration.html",errormessage1 = var)
-    else:
-        print("You are not registered user, Please first register to login")
-        var = "You are not a registered user, Please first register to login"
-        return render_template("Registration.html", errormessage1 = var)
-
-#this is used to get the search only after login
-@app.route("/home", methods = ['POST', 'GET'])
-def home():
-    try: 
-        user = session['email']
-        if request.method == 'POST':
-            req = request.form['Search']
-            print(req)
-            reqs = str(req)
-            #partial search 
-            booksdata = db.session.query(Books.isbn, Books.title, Books.author, Books.year).filter(or_(Books.title.like("%"+reqs+"%"), Books.author.like("%"+reqs+"%"), Books.isbn.like("%"+reqs+"%"))).all()
-            if booksdata.__len__() == 0:
-                var = "No search found!"
-                return render_template("login.html", user = user, errormessage1 = var)
-            return render_template("login.html", booksdata = booksdata, formaction = '/home', user = user)  
-        return render_template("login.html", user =user)
-    except Exception as e:
-        print(e)
-        var = "You must login to view the homepage"
-        return render_template("Registration.html", errormessage1 = var)
 
 #route after logout is done by the user
 @app.route("/logout")
@@ -175,4 +168,35 @@ def apibook():
     print(response)
     return jsonify(response),200
 # end of the book api route
+
+#route admin
+@app.route('/admin')
+def admin():
+    alludata = schema.query.order_by(desc(schema.createtimestamp)).all()
+    return render_template("admin.html", admin = alludata)
+
+#Json api route 
+@app.route('/api/search', methods = ["POST"])
+def apiSearch():
+    if not request.is_json:
+        message = "Invalid request format"
+        return jsonify(message), 400
+    reqs = request.get_json()['query']
+    try:
+        booksdata = db.session.query(Books.isbn, Books.title, Books.author, Books.year).filter(or_(Books.title.like("%"+reqs+"%"), Books.author.like("%"+reqs+"%"), Books.isbn.like("%"+reqs+"%"))).all()
+    except: 
+        message = "Please Try again Later"
+        return jsonify(message), 500
+    if booksdata.__len__() == 0:
+        message = "No search results found"
+        return jsonify(message),404
+    response = []
+    for book in booksdata:
+        dictionary = {}
+        dictionary["isbn"] = book[0]
+        dictionary["title"] = book[1]
+        dictionary["author"] = book[2]
+        dictionary["year"] = book[3]
+        response.append(dictionary)
+    return jsonify(response), 200
 
