@@ -2,7 +2,7 @@
 {% extends "generictemplate.html" %}
 <!--This is for the icon display-->
 {% block links %} <link rel="shortcut icon" href="{{ url_for('static', filename='icon.png') }}"> {% endblock %}
-{% block title %}<title>Login Page</title>{% endblock %} 
+{% block title %}<title>Registration Page</title>{% endblock %} 
 {%  block styles %} 
 <style>
     body {
@@ -20,7 +20,9 @@
         border: 1px solid grey;
         float: left;
         width: 80%;
-        background: #f1f1f1;
+        background: #f1f1f1; 
+        opacity: 0.5;
+
         }
 
         form.example button {
@@ -28,7 +30,7 @@
         width: 20%;
         padding: 10px;
         background: #2196F3;
-        color: white;
+        color: white; 
         font-size: 17px;
         border: 1px solid grey;
         border-left: none;
@@ -71,7 +73,7 @@ function SearchApi( ) {
             "<th class='bg-secondary text-white'> {{ 'View Book Page' }}</th>";
             for(var i = 0; i < data.length; i++) {
               htmltext = htmltext + "<tr>" + "<td>"+data[i]["isbn"] +"</td>"+ "<td>" + data[i]["title"] +"</td>"+
-              "<td>" + data[i]["author"] +"</td>"+ "<td>" + data[i]["year"] +"</td><td><button onclick = 'bookdisplay(this)' id = "+
+              "<td>" + data[i]["author"] +"</td>"+ "<td>" + data[i]["year"] +"</td><td><button onclick = 'apiBook(this)' id = "+
               data[i]["isbn"] + ">View Book</button></td></tr>"
             }
       htmltext = htmltext + " </tbody> </table> </div></div>"
@@ -87,8 +89,56 @@ function SearchApi( ) {
   }
 }
     
+// Book Form
+function apiBook(e) {
+var isbn = e.id;
+  var url = "/api/book?isbn="+isbn ;
+  var xhr = new XMLHttpRequest();
+  
+  console.log(isbn);
+  xhr.open("GET", url, true);
+  xhr.setRequestHeader("Content-type", "application/json");
+  let json = JSON.stringify ({
+    "isbn" : isbn
+  });
+  xhr.send();
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+      var data = JSON.parse(xhr.responseText);
+      console.log(data);
+      var htmltext = "<div class='card' style = 'width:50rem;'><ul>";
+      htmltext= htmltext + "<img src = 'http://covers.openlibrary.org/b/isbn/ "+ data.isbn + ".jpg ' width = '250' height = '250' alt = "+ data.title +"/> <li class ='list-group-item'><b>Isbn:</b>" + data.isbn+ "</li>" + "<li class = 'list-group-item'><b>Title:</b>"+ data.title+"</li>"+        
+        "<li class = 'list-group-item'><b>Author:</b>"+data.author+"</li>"+
+        "<li class = 'list-group-item'><b>Year:</b>"+ data.year+"</li>"
+    
+      htmltext=htmltext + "</ul></div>"
+      console.log(data.reviews);
+      // htmltext = htmltext + "<p id = '1416949658'>"+data.isbn +"</p><ul>";
+      htmltext=htmltext+"<div><h1> Reviews</h1>"+"<tr>"
+      for(var i = 0; i < data.reviews.length; i++) {
+      htmltext=htmltext+"<h1 style = 'text-align:center'></h1>"+"<div class='card' style='width: 50rem; align:center'>"+
+      "<ul class='list-group list-group-flush'>"+"<li class='list-group-item'><b text-primary>&#x1F464: </b>"+data.reviews[i]["email"]+"</li>"+
+      "<li class='list-group-item'><b text-primary>&#11088: </b>"+data.reviews[i]["rate"]+"</li>" +"<li class='list-group-item'><b text-primary>&#x1F4AC: </b>"+data.reviews[i]["review"]+"</li>"
+      }
+      htmltext = htmltext + " </ul></div></tr></div>"
+      
+           
+      document.getElementById("htmltext").innerHTML = htmltext;
+    }
+    else if(xhr.status == 404) {
+      alert("Error:  No Book Found");
+      console.log("Error:  No Book Found");
+    } else {
+      alert("Error: Please Try again");
+      console.log("Error: Please Try again");
+    }
+    
+
+  }
+}
+
 </script>
-{% endblock %}   
+{% endblock %}
 {% block body %}
         <!--Navbar which displays user email and logout button-->
         <nav class="navbar navbar-dark bg-dark justify-content-between">
