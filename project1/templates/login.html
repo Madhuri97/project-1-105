@@ -22,7 +22,9 @@
         border: 1px solid grey;
         float: left;
         width: 80%;
-        background: #f1f1f1;
+        background: #f1f1f1; 
+        opacity: 0.5;
+
         }
 
         form.example button {
@@ -30,7 +32,7 @@
         width: 20%;
         padding: 10px;
         background: #2196F3;
-        color: white;
+        color: white; 
         font-size: 17px;
         border: 1px solid grey;
         border-left: none;
@@ -67,8 +69,7 @@ function reviewapi(ele) {
     let json = JSON.stringify ({
     "rate": rating,
     "review":comment,
-    "email":email
-  });
+    "email":email});
   xhr.send(json);
   xhr.onload = () => {
     if (xhr.status == 200) {
@@ -83,15 +84,93 @@ function reviewapi(ele) {
 
   }
 }
+// Search Form
+function SearchApi( ) {
+  var xhr = new XMLHttpRequest();
+  var query = document.getElementById('query').value;
+  xhr.open("POST", "/api/search", true);
+  xhr.setRequestHeader("Content-type", "application/json");
+  let json = JSON.stringify ({
+    "query" : query
+
+  });
+  xhr.send(json);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+      var data = JSON.parse(xhr.responseText);
+      var htmltext = "<br><h1 id = 'display' style = 'text-align:center'>Books</h1><br><div class='container'>"+
+            "<div class='table-wrapper-scroll-y my-custom-scrollbar'>"+"<table xlass = 'table' border = 1 align = 'center' class='table table-striped'>"+
+            "<th class='bg-secondary text-white'> {{ 'ISBN' }}</th>"+"<th class='bg-secondary text-white'> {{ 'Title' }}</th>"+
+            "<th class='bg-secondary text-white'> {{ 'Author' }}</th>"+"<th class='bg-secondary text-white'> {{ 'Year' }}</th>"+
+            "<th class='bg-secondary text-white'> {{ 'View Book Page' }}</th>";
+            for(var i = 0; i < data.length; i++) {
+              htmltext = htmltext + "<tr>" + "<td>"+data[i]["isbn"] +"</td>"+ "<td>" + data[i]["title"] +"</td>"+
+              "<td>" + data[i]["author"] +"</td>"+ "<td>" + data[i]["year"] +"</td><td><button onclick = 'apiBook(this)' id = "+
+              data[i]["isbn"] + ">View Book</button></td></tr>"
+            }
+      htmltext = htmltext + " </tbody> </table> </div></div>"
+      document.getElementById("htmltext").innerHTML = htmltext;
+    } else if(xhr.status == 404) {
+      alert("Page not found");
+      console.log("Error: Page Not Found");
+    } else {
+      console.log("Error: Please Try again");
+      alert("Please try again");
+    } 
+    console.log(data);
+  }
+}
     
+// Book Form
+function apiBook(e) {
+var isbn = e.id;
+  var url = "/api/book?isbn="+isbn ;
+  var xhr = new XMLHttpRequest();
+  
+  console.log(isbn);
+  xhr.open("GET", url, true);
+  xhr.setRequestHeader("Content-type", "application/json");
+  let json = JSON.stringify ({
+    "isbn" : isbn
+  });
+  xhr.send();
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+      var data = JSON.parse(xhr.responseText);
+      console.log(data);
+      var htmltext = "<div class='card' style = 'width:50rem;'><ul>";
+      htmltext= htmltext + "<img src = 'http://covers.openlibrary.org/b/isbn/ "+ data.isbn + ".jpg ' width = '250' height = '250' alt = "+ data.title +"/> <li class ='list-group-item'><b>Isbn:</b>" + data.isbn+ "</li>" + "<li class = 'list-group-item'><b>Title:</b>"+ data.title+"</li>"+        
+        "<li class = 'list-group-item'><b>Author:</b>"+data.author+"</li>"+
+        "<li class = 'list-group-item'><b>Year:</b>"+ data.year+"</li>"
+    
+      htmltext=htmltext + "</ul></div>"
+      console.log(data.reviews);
+      // htmltext = htmltext + "<p id = '1416949658'>"+data.isbn +"</p><ul>";
+      htmltext=htmltext+"<div><h1> Reviews</h1>"+"<tr>"
+      for(var i = 0; i < data.reviews.length; i++) {
+      htmltext=htmltext+"<h1 style = 'text-align:center'></h1>"+"<div class='card' style='width: 50rem; align:center'>"+
+      "<ul class='list-group list-group-flush'>"+"<li class='list-group-item'><b text-primary>&#x1F464: </b>"+data.reviews[i]["email"]+"</li>"+
+      "<li class='list-group-item'><b text-primary>&#11088: </b>"+data.reviews[i]["rate"]+"</li>" +"<li class='list-group-item'><b text-primary>&#x1F4AC: </b>"+data.reviews[i]["review"]+"</li>"
+      }
+      htmltext = htmltext + " </ul></div></tr></div>"
+      
+           
+      document.getElementById("htmltext").innerHTML = htmltext;
+    }
+    else if(xhr.status == 404) {
+      alert("Error:  No Book Found");
+      console.log("Error:  No Book Found");
+    } else {
+      alert("Error: Please Try again");
+      console.log("Error: Please Try again");
+    }
+    
+
+  }
+}
+
 </script>
 {% endblock %}
-
-
-
-
-    </script>
-{% endblock %}   
 {% block body %}
         <!--Navbar which displays user email and logout button-->
         <nav class="navbar navbar-dark bg-dark justify-content-between">
@@ -104,6 +183,17 @@ function reviewapi(ele) {
         </br>
         </br>
         <!--This is for search area with icon search-->
+
+        <div class="mx-auto">
+
+            <form class="example" id = "searchapi" style="margin:auto;max-width:700px" onsubmit = "event.preventDefault(); SearchApi()">
+                <input type="text" placeholder="Search.." name="Search" id = "query">
+                <button type="submit" id="#display"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+        </br>
+        </br>
+
         <form id = "reviewform" method="POST" onsubmit="event.preventDefault();reviewapi(this)" >
             <div style = "padding-bottom: 18px; font-size:24px ;">Book Review</div>
             <!-- The rating is submitted from the user by pressing on these stars -->
@@ -133,5 +223,5 @@ function reviewapi(ele) {
             <p style="text-align: center; color: primary;" id = "msg_display"></p>
         </form>
         <div id = "htmltext"></div>
-
-    {% endblock %}
+        <div id = "htmltext"></div>
+{% endblock %}
