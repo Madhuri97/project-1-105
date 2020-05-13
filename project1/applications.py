@@ -9,6 +9,7 @@ from Schema import *
 from review import *
 from books_db import *
 
+
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -125,6 +126,7 @@ def bookpage(id):
         return render_template("Registration.html", message = var)
 #This route ends here
 
+
 #route after logout is done by the user
 @app.route("/logout")
 def logout():
@@ -135,6 +137,42 @@ def logout():
     except:
         var = "You must logout from the page"
         return render_template("Registration.html", message1 = var)
+
+
+# Third route -- Review submission
+@app.route('/api/submitReview', methods  =['POST'])
+def submitreview():
+    if not request.is_json:
+        message = "Invalid request format"
+        # print("here1");
+        return jsonify(message),400
+    isbn = request.args.get("isbn")
+    try:
+        result = db.session.query(Books).filter(Books.isbn == isbn).first()
+    except:
+        message = "Please Try again Later"
+        return jsonify(message),500
+    if result is None:
+        print("here");
+        message = "Please enter valid ISBN"
+        return jsonify(message), 404
+    rate = request.get_json()['rate']
+    review = request.get_json()['review']
+    email = request.get_json()['email']
+    user = reviews.query.filter_by(user=email,isbn=isbn).first()
+    if user is not None:
+        message = "Sorry you can't review this book again"
+        return jsonify(message), 409
+    reviewdata=reviews(isbn,email,rate,review)
+    try:
+        db.session.add(reviewdata)
+        db.session.commit()
+    except:
+        message = "Please Try Again "
+        return jsonify(message), 500
+    # print(isbn,rating,comment)
+    message = "Review submitted successfully"
+    return jsonify(message), 200
 
 # start of book api route
 @app.route('/api/book')
@@ -199,4 +237,5 @@ def apiSearch():
         dictionary["year"] = book[3]
         response.append(dictionary)
     return jsonify(response), 200
+
 
