@@ -153,7 +153,7 @@ def submitreview():
         message = "Please Try again Later"
         return jsonify(message),500
     if result is None:
-        print("here");
+        print("here")
         message = "Please enter valid ISBN"
         return jsonify(message), 404
     rate = request.get_json()['rate']
@@ -171,8 +171,31 @@ def submitreview():
         message = "Please Try Again "
         return jsonify(message), 500
     # print(isbn,rating,comment)
-    message = "Review submitted successfully"
-    return jsonify(message), 200
+    try:
+        booksdata = db.session.query(Books).filter(Books.isbn == isbn).first()
+        details = db.session.query(reviews).filter(reviews.isbn == isbn).all() 
+    except Exception as e:
+        print(e)
+        message = "Please try again"
+        return jsonify(message),500
+    if booksdata is None:
+        message = "No book found"
+        return jsonify(message), 404
+    response = {}
+    reviewss= []
+    print(reviewss)
+    for review in details:
+        eachreview = {}
+        eachreview["email"] = review.user
+        eachreview["rate"] = review.rate
+        eachreview["review"] = review.review
+        reviewss.append(eachreview)
+    response["isbn"] = booksdata.isbn
+    response["title"] = booksdata.title
+    response["author"] = booksdata.author
+    response["year"] = booksdata.year
+    response["reviews"] = reviewss
+    return jsonify(response),200
 
 # start of book api route
 @app.route('/api/book')

@@ -3,12 +3,13 @@
     padding: 0;
 }
 .rate {
-    float: left;
+    
+    display: inline-block;
     height: 46px;
-    padding: 0 10px;
+    
 }
 .rate:not(:checked) > input {
-    position:absolute;
+    position: relative;
     top:-9999px;
 }
 .rate:not(:checked) > label {
@@ -37,5 +38,3 @@
 .rate > label:hover ~ input:checked ~ label {
     color: #c59b08;
 }
-
-/* Modified from: https://github.com/mukulkant/Star-rating-using-pure-css */
